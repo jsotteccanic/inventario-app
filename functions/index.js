@@ -13,52 +13,67 @@ exports.helloWorld = functions.https.onRequest((request, res) => {
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-    switch (request.method) {
-        case 'GET':
-            res.send('Se esta usando get');
+
+    switch (request.body.function) {
+        case 'registrarPresentacion':
+            res.send(registrarPresentacion(request.body.datos));
             break;
-        case 'POST':
-            res.send(invocar(request.body.function, request.body.datos));
+        case 'registrarTipoDoc':
+            res.send(registrarTipoDoc(request.body.datos));
             break;
-        case 'OPTIONS':
-            res.send(request.method);
+        case 'registrarPrincipioActivo':
+            res.send(registrarPrincipioActivo(request.body.datos));
             break;
-        case 'PUT':
-            res.send(request.params);
+        case 'registrarClase':
+            res.send(registrarClase(request.body.datos));
             break;
-        case 'DELETE':
-            res.send(request.method);
+        case 'registrarAlmacen':
+            res.send(registrarAlmacen(request.body.datos));
+            break;
+        case 'registrarProveedor':
+            res.send(registrarProveedor(request.body.datos));
+            break;
+        case 'registrarLaboratorio':
+            res.send(registrarLaboratorio(request.body.datos));
             break;
         default:
-            res.send('No tiene definido el tipo de request');
+            res.send('No tiene definido el tipo de request : ' + request.body.function);
     }
 });
-function invocar(func, data) {
-    switch (func) {
-        case 'registrarAlmacen':
-            return registrarAlmacen(data);
-        case 'registrarPersonas':
-            return registrarPersonas(data);
-        case 'registrarProductos':
-            return registrarProductos(data);
-        default:
-            return 'No existe un metodo que ejecutar';
-    }
+
+function registrarPrincipioActivo(obj) {
+    return db.collection('principioActivo').add(obj).then(ref => {
+        return ('Se registró correctamente' + ref.id);
+    });
 }
+function registrarTipoDoc(obj) {
+    return db.collection('tipoDoc').add(obj).then(ref => {
+        return ('Se registró correctamente' + ref.id);
+    });
+}
+function registrarPresentacion(obj) {
+    return db.collection('presentacion').add(obj).then(ref => {
+        return ('Se registró correctamente' + ref.id);
+    });
+}
+
+function registrarClase(obj) {
+    return db.collection('clase').add(obj).then(ref => {
+        return ('Se registró correctamente' + ref.id);
+    });
+}
+
 function registrarAlmacen(obj) {
     return db.collection('almacen').add(obj).then(ref => {
-        return 'Se registró correctamente' + ref.id;
+        return ref.id;
     });
 }
-function registrarPersonas(obj) {
-    let inv = db.collection('personas').add(obj).then(ref => {
-        console.log('Se registró correctamente' + ref.id);
+function registrarProveedor(obj) {
+    return db.collection('proveedor').add(obj).then(ref => {
+        return ref.id;
     });
-    return "se registro correctamente ";
 }
-function registrarProductos(obj) {
-    let inv = db.collection('productos').add(obj).then(ref => {
-        console.log('Se registró correctamente' + ref.id);
-    });
-    return "se registro correctamente ";
+function registrarLaboratorio(obj) {
+    return db.collection('laboratorio').add(obj).then(ref => {
+    }).id;
 }
